@@ -2,9 +2,9 @@ package simplerequest
 
 import (
 	"github.com/pkg/errors"
-	"io/ioutil"		
+	"io/ioutil"
 	"net/http"
-	"net/http/httputil"	
+	"net/http/httputil"
 	"net/url"
 	"time"
 )
@@ -63,7 +63,7 @@ func prettyRequest(sr SimpleResponse, req *http.Request) SimpleResponse {
 }
 
 //prettyprint
-func prettyResponse(sr SimpleResponse, resp *http.Response) SimpleResponse { 
+func prettyResponse(sr SimpleResponse, resp *http.Response) SimpleResponse {
 	// A mechanism for users to debug their code using Response headers
 	pr, _ := httputil.DumpResponse(resp, false)
 	sr.PrettyResponse = string(pr)
@@ -71,7 +71,7 @@ func prettyResponse(sr SimpleResponse, resp *http.Response) SimpleResponse {
 }
 
 func status(sr SimpleResponse, resp *http.Response) SimpleResponse {
-	sr.StatusText = http.StatusText(resp.StatusCode)	
+	sr.StatusText = http.StatusText(resp.StatusCode)
 	sr.StatusCode = resp.StatusCode
 	return sr
 }
@@ -92,11 +92,11 @@ func (sr *SimpleRequest) handlehttp(method string, reqURL *url.URL) (SimpleRespo
 	}
 
 	if sr.agent != "" {
-		req.Header.Add("User-Agent", sr.agent)		
+		req.Header.Add("User-Agent", sr.agent)
 	}
 
 	if sr.byterange != "" {
-		req.Header.Add("Range", sr.byterange)	
+		req.Header.Add("Range", sr.byterange)
 	}
 
 	resp, err := client.Do(req)
@@ -108,7 +108,7 @@ func (sr *SimpleRequest) handlehttp(method string, reqURL *url.URL) (SimpleRespo
 	// with the packet content...
 	data, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
-	
+
 	if err != nil {
 		return simpleresponse, errors.Wrap(err, "reading http response body")
 	}
@@ -116,7 +116,7 @@ func (sr *SimpleRequest) handlehttp(method string, reqURL *url.URL) (SimpleRespo
 	simpleresponse.Header = resp.Header
 	simpleresponse.Data = string(data)
 	simpleresponse = prettyRequest(simpleresponse, req)
-	simpleresponse = prettyResponse(simpleresponse, resp)	
+	simpleresponse = prettyResponse(simpleresponse, resp)
 	simpleresponse = status(simpleresponse, resp)
 
 	return simpleresponse, err

@@ -20,11 +20,11 @@ const br = "bytes=0-"
 // HTTP request proper in code.
 type SimpleRequest struct {
 	Method    string
-	URL    	*url.URL
+	URL       *url.URL
 	Proxy     bool
-	agent 	 string
+	agent     string
 	byterange string
-	timeout time.Duration
+	timeout   time.Duration
 }
 
 func (sr *SimpleRequest) Agent(agent string) {
@@ -36,10 +36,10 @@ func (sr *SimpleRequest) Byterange(limit string) {
 }
 
 type SimpleResponse struct {
-	Data string
-	Header http.Header
+	Data           string
+	Header         http.Header
 	PrettyResponse string
-	PrettyRequest string
-	StatusText string
-	StatusCode int
+	PrettyRequest  string
+	StatusText     string
+	StatusCode     int
 }
