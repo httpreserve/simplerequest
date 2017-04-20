@@ -8,10 +8,10 @@ import (
 
 // HTTP request methods that are useful to us
 
-// Get whole or partial response from URL
+// GET whole or partial response from URL
 const GET = http.MethodGet
 
-// Head is used to fetch headers only from URL
+// HEAD is used to fetch headers only from URL
 const HEAD = http.MethodHead
 
 // Default byte-range for initial requests
