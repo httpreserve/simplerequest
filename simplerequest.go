@@ -9,14 +9,8 @@ import (
 	"time"
 )
 
-// Create is a mechanism to make a suitable
-// http request header to find some information out about
-// a web resouse.
-// We want to make handlehttp more useable so let's wrap
-// as much as we can up front and see if that's possible
-// recommended setting for byterange is to maintain the default
-// but the potential to set it manually here is possible
-// If byterange is left "" then default range will be used.
+// Create is a mechanism to make a suitable http request header
+// to find some information out about a web resouse.
 func Create(method string, reqURL string) (SimpleRequest, error) {
 	var sr SimpleRequest
 	sr.Method = method
@@ -28,7 +22,7 @@ func Create(method string, reqURL string) (SimpleRequest, error) {
 	return sr, nil
 }
 
-// CreateDefault will create a default object to make work easier for all.
+// Default will create a default object to make work easier for all.
 func Default(reqURL *url.URL) SimpleRequest {
 	// we're not concerned about error here, as internally, we've
 	// already parsed the URL which is the only source of potential
@@ -37,10 +31,8 @@ func Default(reqURL *url.URL) SimpleRequest {
 	return sr
 }
 
-// Do is another mechanism we can use to
-// retrieve some basic information out from a web resource.
-// Call handlehttp from a SimpleRequest object instead
-// of calling function directly...
+// Do will perform the request for us from the
+// SimpleRequest object itself.
 func (sr *SimpleRequest) Do() (SimpleResponse, error) {
 	resp, err := sr.handlehttp(sr.Method, sr.URL)
 	return resp, err
@@ -51,32 +43,33 @@ func (sr *SimpleRequest) Timeout(duration time.Duration) {
 	sr.timeout = time.Duration(duration * time.Second)
 }
 
+// GetHeader can be used to retrieve headers from the server's response
 func (sr *SimpleResponse) GetHeader(key string) string {
 	return sr.Header.Get(key)
 }
 
+// prettyRequest is used internally to pretty print the request
 func prettyRequest(sr SimpleResponse, req *http.Request) SimpleResponse {
-	//	// A mechanism for users to debug their code using Request headers
 	pr, _ := httputil.DumpRequest(req, false)
 	sr.PrettyRequest = string(pr)
 	return sr
 }
 
-//prettyprint
+// prettyResponse is used internally to pretty print the response
 func prettyResponse(sr SimpleResponse, resp *http.Response) SimpleResponse {
-	// A mechanism for users to debug their code using Response headers
 	pr, _ := httputil.DumpResponse(resp, false)
 	sr.PrettyResponse = string(pr)
 	return sr
 }
 
+// status is used internally to populate status elements of SimpleResponse
 func status(sr SimpleResponse, resp *http.Response) SimpleResponse {
 	sr.StatusText = http.StatusText(resp.StatusCode)
 	sr.StatusCode = resp.StatusCode
 	return sr
 }
 
-// Handle HTTP functions of the calling application.
+// Handle the HTTP request and response functions of the calling application.
 func (sr *SimpleRequest) handlehttp(method string, reqURL *url.URL) (SimpleResponse, error) {
 
 	var simpleresponse SimpleResponse
@@ -113,6 +106,7 @@ func (sr *SimpleRequest) handlehttp(method string, reqURL *url.URL) (SimpleRespo
 		return simpleresponse, errors.Wrap(err, "reading http response body")
 	}
 
+	// Populate the remainder of the SimpleResponse elements
 	simpleresponse.Header = resp.Header
 	simpleresponse.Data = string(data)
 	simpleresponse = prettyRequest(simpleresponse, req)
