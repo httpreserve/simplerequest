@@ -22,11 +22,13 @@ const br = "bytes=0-"
 
 // SimpleRequest structure to be turned into a HTTP request proper
 type SimpleRequest struct {
-	Method    string        // Method to use to query the URL
-	URL       *url.URL      // URL we're requesting
-	agent     string        // Agent string to include in the request
-	byterange string        // Byterange to download partial content
-	timeout   time.Duration // Timeout for requests to fail
+	Method     string        // Method to use to query the URL
+	URL        *url.URL      // URL we're requesting
+	agent      string        // Agent string to include in the request
+	byterange  string        // Byterange to download partial content
+	accept     string        // Content-type to accept for apis
+	timeout    time.Duration // Timeout for requests to fail
+	noredirect bool          // Should the client follow redirects, or inspect first response
 }
 
 // Agent is used to supply a user agent name to the request
@@ -39,6 +41,11 @@ func (sr *SimpleRequest) Agent(agent string) {
 // for a GET request
 func (sr *SimpleRequest) Byterange(limit string) {
 	sr.byterange = br + limit
+}
+
+// Accept allows us to control the response sent back
+func (sr *SimpleRequest) Accept(accept string) {
+	sr.accept = accept
 }
 
 // SimpleResponse to wrap useful components of a HTTP response

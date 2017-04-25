@@ -43,6 +43,11 @@ func (sr *SimpleRequest) Timeout(duration time.Duration) {
 	sr.timeout = time.Duration(duration * time.Second)
 }
 
+// Redirect tells the client whether or not to follow redirects...
+func (sr *SimpleRequest) Redirect(redirect bool) {
+	sr.noredirect = redirect
+}
+
 // GetHeader can be used to retrieve headers from the server's response
 func (sr *SimpleResponse) GetHeader(key string) string {
 	return sr.Header.Get(key)
@@ -77,6 +82,11 @@ func (sr *SimpleRequest) handlehttp(method string, reqURL *url.URL) (SimpleRespo
 	var client http.Client
 	if sr.timeout != 0 {
 		client.Timeout = sr.timeout
+		if sr.noredirect {
+			client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			}
+		}
 	}
 
 	req, err := http.NewRequest(method, reqURL.String(), nil)
@@ -90,6 +100,10 @@ func (sr *SimpleRequest) handlehttp(method string, reqURL *url.URL) (SimpleRespo
 
 	if sr.byterange != "" {
 		req.Header.Add("Range", sr.byterange)
+	}
+
+	if sr.accept != "" {
+		req.Header.Add("Accept", sr.accept)
 	}
 
 	resp, err := client.Do(req)
