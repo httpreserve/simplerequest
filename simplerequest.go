@@ -44,7 +44,7 @@ func (sr *SimpleRequest) Timeout(duration time.Duration) {
 }
 
 // Redirect tells the client whether or not to follow redirects...
-func (sr *SimpleRequest) Redirect(redirect bool) {
+func (sr *SimpleRequest) NoRedirect(redirect bool) {
 	sr.noredirect = redirect
 }
 
