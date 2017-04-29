@@ -1,10 +1,10 @@
 package simplerequest
 
-var version = "0.0.1"
+var version = "0.0.2"
 var text = "httpreserve-simplerequest"
 
 // Version can be used to display version information
 // about this package in your application.
 func Version() string {
-	return text + "-" + version
+	return text + "/" + version
 }
