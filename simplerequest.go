@@ -82,10 +82,11 @@ func (sr *SimpleRequest) handlehttp(method string, reqURL *url.URL) (SimpleRespo
 	var client http.Client
 	if sr.timeout != 0 {
 		client.Timeout = sr.timeout
-		if sr.noredirect {
-			client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-				return http.ErrUseLastResponse
-			}
+	}
+
+	if sr.noredirect {
+		client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
 		}
 	}
 
