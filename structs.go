@@ -56,4 +56,5 @@ type SimpleResponse struct {
 	PrettyRequest  string      // Pretty printed request
 	StatusText     string      // Status text from the response
 	StatusCode     int         // Status code from the response
+	Location       *url.URL    // Location pointed to bu resource
 }

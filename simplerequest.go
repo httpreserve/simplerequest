@@ -43,7 +43,7 @@ func (sr *SimpleRequest) Timeout(duration time.Duration) {
 	sr.timeout = time.Duration(duration * time.Second)
 }
 
-// Redirect tells the client whether or not to follow redirects...
+// NoRedirect tells the client whether or not to follow redirects...
 func (sr *SimpleRequest) NoRedirect(redirect bool) {
 	sr.noredirect = redirect
 }
@@ -71,6 +71,16 @@ func prettyResponse(sr SimpleResponse, resp *http.Response) SimpleResponse {
 func status(sr SimpleResponse, resp *http.Response) SimpleResponse {
 	sr.StatusText = http.StatusText(resp.StatusCode)
 	sr.StatusCode = resp.StatusCode
+	return sr
+}
+
+// location is used internally to populate status elements of SimpleResponse
+func location(sr SimpleResponse, resp *http.Response) SimpleResponse {
+	var err error
+	sr.Location, err = resp.Location()
+	if err != nil {
+		sr.Location = nil
+	}
 	return sr
 }
 
@@ -127,6 +137,7 @@ func (sr *SimpleRequest) handlehttp(method string, reqURL *url.URL) (SimpleRespo
 	simpleresponse = prettyRequest(simpleresponse, req)
 	simpleresponse = prettyResponse(simpleresponse, resp)
 	simpleresponse = status(simpleresponse, resp)
+	simpleresponse = location(simpleresponse, resp)
 
 	return simpleresponse, err
 }
